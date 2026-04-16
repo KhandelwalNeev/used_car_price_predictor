@@ -9,9 +9,14 @@ from scipy.ndimage import rotate
 from wordcloud import WordCloud
 from collections import Counter
 import re
+import gdown
+import os
 
 
-df = pd.read_csv('cleaned_cars_merges.csv')
+df = joblib.load("cleaned_cars_merges.pkl")
+# df = pd.read_csv('cleaned_cars_merges.csv')
+
+st.dataframe(df)
 
 
 def generate_wordcloud(df, column_name, title):
