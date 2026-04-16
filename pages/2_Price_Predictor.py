@@ -2,10 +2,22 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
+import gdown
+import os
 
+# model = joblib.load('car_price_model.pkl')
+
+
+url = 'https://drive.google.com/file/d/1eVXFNmgA0usv5jUv0wkbxIAtJsQTwN0P/view?usp=sharing'
+
+if not os.path.exists("car_model.pkl"):
+    gdown.download(url, "car_model.pkl", quiet=False)
+
+model = joblib.load("car_model.pkl")
+
+# model = joblib.load(url)
 
 df = joblib.load('cars_dataframe.pkl')
-model = joblib.load('car_price_model.pkl')
 
 st.set_page_config(page_title = 'Used Cars Price Predictor')
 
@@ -92,10 +104,14 @@ if st.button('Predict Price'):
 
     prediction = model.predict(input_df)[0]
 
-    # 🔥 if log used
-    try:
-        prediction = np.expm1(prediction)
-    except:
-        pass
+    mae = 94338
 
-    st.success(f"💰 Predicted Price: ₹ {round(prediction, 2)}")
+    lower = int(prediction - 0.75 * mae) / 100000
+    upper = int(prediction + 0.75 * mae) / 100000
+
+    price_lakh = prediction / 100000
+
+    st.success(f"Estimated Price: ₹{price_lakh:.2f} Lakh")
+    # st.success(f"Estimated Price: ₹{prediction:,}")
+    st.success(f"Price Range: ₹{lower:.2f} Lakh – ₹{upper:.2f} Lakh")
+    # st.success(f"💰 Predicted Price: ₹ {round(prediction):,}")
